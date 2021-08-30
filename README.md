@@ -1,48 +1,50 @@
 # Convert a Google Spreadsheet to a localization file. Version 2
 
-
 ## Installation
 `npm install qoqa/localize-with-spreadsheet-2`
 
 ## Differences in version 2 (only major ones listed)
+
 - Preserve line breaks from the Google Sheets
+- Uses newer version of `google-spreadsheet` which in turn supports the Google Sheets v4 API
 
 ## Example
-Given a Google Spreadsheet like this:  
-![Spreadsheet example](https://github.com/xavierha/localize-with-spreadsheet/raw/master/doc/spreadsheet-example.png)
 
-The tool fetch the spreadsheet and write the result to a file in the Android or iOS format:
+Requires:
 
-![Result android](https://github.com/xavierha/localize-with-spreadsheet/raw/master/doc/result-android.png) ![Result iOS](https://github.com/xavierha/localize-with-spreadsheet/raw/master/doc/result-ios.png)
+- Google Service Account (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication?id=service-account)
+- Spreadsheet key
+- Sheet name filter
 
 Create a file `update-localization.js`
 
-```javascript 1.7
-const Localize = require('localize-with-spreadsheet')
-const transformer = Localize.fromGoogleSpreadsheet('0Aq6WlQdq71FydDZlaWdmMEUtc2tUb1k2cHRBS2hzd2c', '*')
-const properties = (value) => {
-  return { valueCol: value, format: 'android' } // similarly, for iOS: { valueCol: value, format: 'ios' } 
-}
+```javascript
+const Localize = require('localize-with-spreadsheet-2')
 
-transformer.setKeyCol('KEY')
-transformer.setRemarksCol('Remarks')
-transformer.save('values/strings.xml', properties('NL'));
-transformer.save('values-fr/strings.xml', properties('FR'));
+Localize.fromGoogleSpreadsheet('./config/myapp-1dd646d7c2af.json', '[spreadsheet-key]', '*')
+  .then(localizer => {
+    localizer.setKeyCol('KEY') // name of the column containing the translation key
+    localizer.setRemarkCol('Remarks') // name of the column containing the remarks
+
+    Array.from(['en', 'de']).forEach(language => localizer.save(
+      `project-name/resource/${language}.lproj/Localizable.strings`,
+      { valueCol: language, format: 'ios' } // format can also be 'android' or 'json'
+    ))
+  })
 ```
 
 Run it with
 `node update-localization.js`
 
 ## Advanced
-You can filter the worksheets to include with the second parameter of 'fromGoogleSpreadsheet'
-Ex:
+
+You can filter the worksheets to include with the third parameter of 'fromGoogleSpreadsheet':
+
 ```
-Localize.fromGoogleSpreadsheet("<Key>", '*');
-Localize.fromGoogleSpreadsheet("<Key>", ['HomeScreen, 'ContactScreen']);
-Localize.fromGoogleSpreadsheet("<Key>", [0, 2]);
+Localize.fromGoogleSpreadsheet('[api-key]', '[spreadsheet-key]', '*')
+Localize.fromGoogleSpreadsheet('[api-key]', '[spreadsheet-key]', '[mobile-app]')
 ```
 
 ## Notes
+
 - The script will preserve everything that is above the tags: < !-- AUTO-GENERATED --> or // AUTO-GENERATED
-- Your spreadsheet should be "Published" for this to work
-- You need to have git installed for the installation
