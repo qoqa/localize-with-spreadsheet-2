@@ -12,7 +12,7 @@
 
 Requires:
 
-- API key (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication?id=api-key)
+- Google Service Account (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication?id=service-account)
 - Spreadsheet key
 - Sheet name filter
 
@@ -21,7 +21,7 @@ Create a file `update-localization.js`
 ```javascript
 const Localize = require('localize-with-spreadsheet-2')
 
-Localize.fromGoogleSpreadsheet('[api-key]', '[spreadsheet-key]', '*')
+Localize.fromGoogleSpreadsheet('./config/myapp-1dd646d7c2af.json', '[spreadsheet-key]', '*')
   .then(localizer => {
     localizer.setKeyCol('KEY') // name of the column containing the translation key
     localizer.setRemarkCol('Remarks') // name of the column containing the remarks

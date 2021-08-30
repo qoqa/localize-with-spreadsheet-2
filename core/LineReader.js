@@ -4,6 +4,7 @@ const Q = require('q')
 
 const GSReader = function(spreadsheetKey, sheetsFilter) {
   this._sheet = new GoogleSpreadsheet(spreadsheetKey)
+
   this._sheetsFilter = sheetsFilter
 
   this._fetchDeferred = Q.defer()
@@ -11,9 +12,11 @@ const GSReader = function(spreadsheetKey, sheetsFilter) {
   this._fetchedWorksheets = null
 }
 
-GSReader.builder = async function(apiKey, spreadsheetKey, sheetsFilter) {
+GSReader.builder = async function(credentialsJson, spreadsheetKey, sheetsFilter) {
   const reader = new GSReader(spreadsheetKey, sheetsFilter)
-  await reader._sheet.useApiKey(apiKey)
+
+  await reader._sheet.useServiceAccountAuth(credentialsJson);
+  await reader._sheet.loadInfo()
 
   return reader
 }
@@ -50,7 +53,7 @@ GSReader.prototype.fetchAllCells = async function() {
 }
 
 GSReader.prototype.select = async function(keyCol, valCol, remarkCol) {
-    var self = this;
+    const self = this
 
     const cells = await self.fetchAllCells()
 
