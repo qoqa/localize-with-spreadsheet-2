@@ -49,26 +49,26 @@ GSReader.prototype.fetchAllCells = async function() {
   }
 }
 
-GSReader.prototype.select = async function(keyCol, valCol) {
-  const self = this
+GSReader.prototype.select = async function(keyCol, valCol, remarkCol) {
+    var self = this;
 
-  const cells = await self.fetchAllCells()
+    const cells = await self.fetchAllCells()
 
   return self.extractFromRawData(cells, keyCol, valCol)
 }
 
-GSReader.prototype.extractFromRawData = function(rawWorksheets, keyCol, valCol) {
+GSReader.prototype.extractFromRawData = function(rawWorksheets, keyCol, valCol, remarkCol) {
   const extractedLines = []
 
   for (let i = 0; i < rawWorksheets.length; i++) {
-    const extracted = this.extractFromWorksheet(rawWorksheets[i], keyCol, valCol)
+    const extracted = this.extractFromWorksheet(rawWorksheets[i], keyCol, valCol, remarkCol)
     extractedLines.push.apply(extractedLines, extracted)
   }
 
   return extractedLines
 }
 
-GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol) {
+GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol, remarkCol) {
   let results = [];
 
   // const rows = this.flatenWorksheet(rawWorksheet);
@@ -89,6 +89,9 @@ GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol)
       if (value === valCol) {
         valIndex = i;
       }
+      if (value == remarkCol) {
+        remarkIndex = i;
+      }
     }
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
@@ -97,9 +100,10 @@ GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol)
         try {
           const keyValue = row[keyIndex].value;
           const valValue = row[valIndex].value;
+          const remarkValue = row[remarkIndex].value;
 
           if (keyValue) {
-            results.push(new Line(keyValue, valValue));
+            results.push(new Line(keyValue, valValue, remarkValue));
           }
 
         } catch (err) {
@@ -195,5 +199,3 @@ module.exports = {
   GS:   GSReader,
   Fake: FakeReader
 }
-
-

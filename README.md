@@ -1,8 +1,7 @@
 # Convert a Google Spreadsheet to a localization file. Version 2
 
 ## Installation
-
-`npm install localize-with-spreadsheet-2`
+`npm install qoqa/localize-with-spreadsheet-2`
 
 ## Differences in version 2 (only major ones listed)
 
@@ -25,6 +24,7 @@ const Localize = require('localize-with-spreadsheet-2')
 Localize.fromGoogleSpreadsheet('[api-key]', '[spreadsheet-key]', '*')
   .then(localizer => {
     localizer.setKeyCol('KEY') // name of the column containing the translation key
+    localizer.setRemarksCol('Remarks') // name of the column containing the remarks
 
     Array.from(['en', 'de']).forEach(language => localizer.save(
       `project-name/resource/${language}.lproj/Localizable.strings`,

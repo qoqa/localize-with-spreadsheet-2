@@ -1,6 +1,6 @@
 var COMMENT_STARTERS = ['//', '#'];
 
-var Line = function (key, value) {
+var Line = function (key, value, remark) {
     if (!key) {
         key = '';
     }
@@ -15,6 +15,7 @@ var Line = function (key, value) {
     this._isComment = isComment;
     this._key = key || '';
     this._value = value || '';
+    this._remark = remark || '';
 
 }
 
@@ -59,6 +60,10 @@ Line.prototype.getKey = function () {
 
 Line.prototype.getValue = function () {
     return this._value;
+};
+
+Line.prototype.getRemark = function () {
+    return this._remark;
 };
 
 module.exports = Line;

@@ -24,6 +24,10 @@ Gs2File.prototype.setKeyCol = function(keyCol) {
   this._defaultKeyCol = keyCol
 }
 
+Gs2File.prototype.setRemarkCol = function(remarkCol) {
+  this._defaulRemarkCol = remarkCol;
+}
+
 Gs2File.prototype.setFormat = function(format) {
   this._defaultFormat = format
 }
@@ -40,11 +44,17 @@ Gs2File.prototype.save = async function(outputPath, opts) {
 
   let keyCol = opts.keyCol
   let valueCol = opts.valueCol
+  let remarkCol = opts.remarkCol
   let format = opts.format
   let encoding = opts.encoding
 
   if (!keyCol) {
     keyCol = this._defaultKeyCol
+  }
+
+
+  if (!remarkCol) {
+    remarkCol = this._defaulRemarkCol
   }
 
   if (!valueCol) {
@@ -62,7 +72,7 @@ Gs2File.prototype.save = async function(outputPath, opts) {
     }
   }
 
-  const lines = await this._reader.select(keyCol, valueCol)
+  const lines = await this._reader.select(keyCol, valueCol, remarkCol)
 
   if (lines) {
     const transformer = Transformer[format || 'android']
