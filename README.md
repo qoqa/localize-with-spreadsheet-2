@@ -24,7 +24,7 @@ const Localize = require('localize-with-spreadsheet-2')
 Localize.fromGoogleSpreadsheet('[api-key]', '[spreadsheet-key]', '*')
   .then(localizer => {
     localizer.setKeyCol('KEY') // name of the column containing the translation key
-    localizer.setRemarksCol('Remarks') // name of the column containing the remarks
+    localizer.setRemarkCol('Remarks') // name of the column containing the remarks
 
     Array.from(['en', 'de']).forEach(language => localizer.save(
       `project-name/resource/${language}.lproj/Localizable.strings`,

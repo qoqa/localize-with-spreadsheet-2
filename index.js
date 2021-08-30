@@ -25,7 +25,7 @@ Gs2File.prototype.setKeyCol = function(keyCol) {
 }
 
 Gs2File.prototype.setRemarkCol = function(remarkCol) {
-  this._defaulRemarkCol = remarkCol;
+  this._defaulRemarkCol = remarkCol
 }
 
 Gs2File.prototype.setFormat = function(format) {

@@ -54,7 +54,7 @@ GSReader.prototype.select = async function(keyCol, valCol, remarkCol) {
 
     const cells = await self.fetchAllCells()
 
-  return self.extractFromRawData(cells, keyCol, valCol)
+  return self.extractFromRawData(cells, keyCol, valCol, remarkCol)
 }
 
 GSReader.prototype.extractFromRawData = function(rawWorksheets, keyCol, valCol, remarkCol) {
