@@ -6,10 +6,7 @@ const FileWriter = function() {
 
 FileWriter.prototype.write = function(filePath, encoding, lines, transformer, options) {
   let fileContent = ''
-  if (fs.existsSync(filePath)) {
-    fileContent = fs.readFileSync(filePath, encoding);
-  }
-
+ 
   const valueToInsert = this.getTransformedLines(lines, transformer)
 
   const output = transformer.insert(fileContent, valueToInsert, options)
