@@ -9,6 +9,7 @@ const iOSTransformer = {
     normalizedValue = normalizedValue.replace(/"/gi, '\\"')
     normalizedValue = normalizedValue.replace(/%([@df])/gi, '%$1')
     normalizedValue = normalizedValue.replace(/%s/gi, "%@")
+    normalizedValue = normalizedValue.replace(/%%/, "%")
 
     // Omit "new" remarks
     if (remark === "new") {
