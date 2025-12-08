@@ -1,21 +1,31 @@
 const Line = require('./Line.js')
 const { GoogleSpreadsheet } = require('google-spreadsheet')
+const { JWT } = require('google-auth-library')
 const Q = require('q')
+const fs = require('fs')
 
-const GSReader = function(spreadsheetKey, sheetsFilter) {
-  this._sheet = new GoogleSpreadsheet(spreadsheetKey)
-
+const GSReader = function(spreadsheetKey, sheetsFilter, auth) {
+  this._sheet = new GoogleSpreadsheet(spreadsheetKey, auth)
   this._sheetsFilter = sheetsFilter
-
   this._fetchDeferred = Q.defer()
   this._isFetching = false
   this._fetchedWorksheets = null
 }
 
 GSReader.builder = async function(credentialsJson, spreadsheetKey, sheetsFilter) {
-  const reader = new GSReader(spreadsheetKey, sheetsFilter)
+  // Handle credentials
+  let credentials = credentialsJson
+  if (typeof credentialsJson === 'string') {
+    credentials = JSON.parse(fs.readFileSync(credentialsJson, 'utf8'))
+  }
 
-  await reader._sheet.useServiceAccountAuth(credentialsJson);
+  const serviceAccountAuth = new JWT({
+    email: credentials.client_email,
+    key: credentials.private_key.replace(/\\n/g, '\n'),
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
+
+  const reader = new GSReader(spreadsheetKey, sheetsFilter, serviceAccountAuth)
   await reader._sheet.loadInfo()
 
   return reader
@@ -82,6 +92,7 @@ GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol,
   if (headers) {
     let keyIndex = -1
     let valIndex = -1;
+    let remarkIndex = -1;
 
     for (let i = 0; i < headers.length; i++) {
       const value = headers[i].value;
@@ -101,9 +112,9 @@ GSReader.prototype.extractFromWorksheet = function(rawWorksheet, keyCol, valCol,
 
       if (row) {
         try {
-          const keyValue = row[keyIndex].value;
-          const valValue = row[valIndex].value;
-          const remarkValue = row[remarkIndex].value;
+          const keyValue = row[keyIndex]?.value;
+          const valValue = row[valIndex]?.value;
+          const remarkValue = remarkIndex >= 0 ? row[remarkIndex]?.value : undefined;
 
           if (keyValue) {
             results.push(new Line(keyValue, valValue, remarkValue));
