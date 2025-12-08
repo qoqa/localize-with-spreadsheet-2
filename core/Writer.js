@@ -9,7 +9,12 @@ FileWriter.prototype.write = function(filePath, encoding, lines, transformer, op
  
   const valueToInsert = this.getTransformedLines(lines, transformer)
 
-  const output = transformer.insert(fileContent, valueToInsert, options)
+  let output = transformer.insert(fileContent, valueToInsert, options)
+  
+  // Ensure file ends with a newline
+  if (output && !output.endsWith(EOL)) {
+    output += EOL
+  }
 
   writeFileAndCreateDirectoriesSync(filePath, output, 'utf8')
 }
