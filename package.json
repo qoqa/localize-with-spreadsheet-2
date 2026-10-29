@@ -12,6 +12,9 @@
     "url": "git@github.com:NeverwinterMoon/localize-with-spreadsheet-2.git"
   },
   "main": "index.js",
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+  },
   "dependencies": {
     "google-auth-library": "^10.5.0",
     "google-spreadsheet": "^5.0.2",
